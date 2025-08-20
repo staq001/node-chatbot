@@ -15,4 +15,7 @@ services:
         target: /usr/src/app
       - type: volume
         target: /usr/src/app/node_modules
+    environment:
+      - NODE_ENV: ${NODE_ENV}
+      - GEMINI_API_KEY: ${GEMINI_API_KEY}
     restart: unless-stopped
