@@ -1,6 +1,6 @@
 #syntax=docker/dockerfile:1.5
 
-FROM node:24.5-bullseye as build
+FROM node:24-alpine3.21 as build
 
 ENV NODE_ENV production
 

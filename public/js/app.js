@@ -1,5 +1,9 @@
 const socket = io();
 
+const start = document.querySelector(".output-you");
+const bot = document.querySelector(".output-bot");
+const button = document.querySelector("button");
+
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
 const recognition = new SpeechRecognition();
@@ -7,10 +11,9 @@ const recognition = new SpeechRecognition();
 recognition.lang = "en-US";
 recognition.interimResults = false;
 
-document.querySelector("button").addEventListener('click', () => {
+button.addEventListener('click', () => {
   recognition.start();
   console.log("starting the microphone");
-  console.log(recognition);
 })
 
 recognition.addEventListener("result", (e) => {
@@ -18,21 +21,31 @@ recognition.addEventListener("result", (e) => {
   let text = e.results[last][0].transcript;
 
 
-  console.log(text);
+  start.textContent = text;
+  bot.textContent = "Fetching response..."
 
   socket.emit("chat message", text);
-
-  socket.on("bot reply", (text) => {
-    synthVoice(text);
-    console.log(text);
-  })
 })
 
+
+recognition.addEventListener("speechend", () => {
+  recognition.stop();
+})
+
+recognition.addEventListener('error', (e) => {
+  bot.textContent = `Error: ${e.error}`;
+})
 
 function synthVoice(text) {
   const synth = window.speechSynthesis;
   const utterance = new SpeechSynthesisUtterance();
   utterance.text = text;
+  synth.cancel();
   synth.speak(utterance);
 }
 
+socket.on("bot reply", (reply) => {
+  if (reply == null || reply == "") reply = "No answer";
+  synthVoice(reply);
+  bot.textContent = reply;
+})

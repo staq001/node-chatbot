@@ -2,10 +2,10 @@ version: "3.9"
 
 services:
   chat-bot:
-    image: "node-chat-bot"
     build:
       context: ./
       dockerfile: Dockerfile
+    image: "node-chatbot"
     init: true
     ports:
       - "3000:3000"
@@ -16,6 +16,5 @@ services:
       - type: volume
         target: /usr/src/app/node_modules
     environment:
-      - NODE_ENV: ${NODE_ENV}
-      - GEMINI_API_KEY: ${GEMINI_API_KEY}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
     restart: unless-stopped
