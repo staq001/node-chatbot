@@ -6,7 +6,10 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-const generateResponse = require("./src/gemini")
+const { generateResponse, generateTitle } = require("./src/gemini")
+const ConversationService = require("./services/conversation.services");
+
+const convoService = new ConversationService();
 
 const PORT = process.env.PORT || 3000;
 
@@ -19,7 +22,10 @@ io.on("connection", (socket) => {
 
   socket.on("chat message", async (text) => {
 
+    const title = await generateTitle(text);
     const response = await generateResponse(text);
+
+    const createMessage = await convoService.createMessage(title, text, response)
     socket.emit("bot reply", response);
   })
 })
