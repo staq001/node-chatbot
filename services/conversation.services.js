@@ -1,32 +1,40 @@
-const { ObjectId } = require("mongodb");
+// const { ObjectId } = require("mongodb");
 
 const Messages = require("../model/messages");
 const Conversation = require("../model/conversation");
 
 class ConversationService {
-  async createMessage(title, post, reply, next) {
+
+  async createConversation(title, next) {
     try {
       const conversation = await Conversation.create({
-        title
+        title,
       });
       await conversation.save();
+      return conversation;
+    } catch (e) {
+      throw new next(e);
+    }
+  }
+  async createMessage(id, post, reply, next) {
+    try {
       const message = await Messages.create({
-        "message.conversation": conversation.id,
-        "message.questions": post,
-        "messages.replies": reply
+        conversation_id: id,
+        question: post,
+        reply: reply
       })
       await message.save();
-      return [message, conversation];
+      return message
     } catch (e) {
-      next(e);
+      throw new next(e);
     }
   }
 
   async updateMessage(id, post, reply, next) {
     try {
       const updates = {};
-      updates.$set = { "message.conversation": post };
-      updates.$set = { "message.conversation": reply };
+      updates.$set = { question: post };
+      updates.$set = { reply: reply };
 
 
       const _id = new ObjectId(String(id))
@@ -35,7 +43,7 @@ class ConversationService {
 
       return message;
     } catch (e) {
-      next(e);
+      throw new next(e);
     }
   }
 
@@ -43,16 +51,29 @@ class ConversationService {
     try {
       const _id = ObjectId(String(id));
       const conversation = await Conversation.findByIdAndDelete({ _id });
+
+      if (!conversation) throw new Error("Conversation does not exist.")
+      return conversation.id;
+    } catch (e) {
+      throw new next(e);
+    }
+  }
+
+  async deleteMessage(id, next) {
+    try {
+      const _id = ObjectId(String(id));
+
       const message = await Messages.deleteMany({
-        "messages.conversations": conversation.id
+        conversation_id: id
       })
+      if (!message) throw new Error("Message does not exist.")
       return message.deletedCount;
     } catch (e) {
-      next(e);
+      throw new next(e);
     }
   }
 }
 
 
 
-module.exports = { ConversationService };
+module.exports = ConversationService;

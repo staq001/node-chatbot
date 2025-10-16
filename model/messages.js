@@ -2,28 +2,23 @@ const mongoose = require("mongoose");
 
 const { Schema } = mongoose;
 
-const questionSchema = new Schema({
-  conversation: {
-    type: Schema.Types.ObjectId,
-    ref: "Conversation",
-  },
-  questions: {
-    type: String,
-    trim: true,
-  },
-  replies: {
-    type: String,
-    trim: true,
-  }
-},
+const messageSchema = new Schema(
   {
-    _id: false
-  }
-);
+    question: {
+      type: String,
+      trim: true,
+    },
+    reply: {
+      type: String,
+      trim: true,
+    },
+    conversation_id: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: "Conversation",
+    },
 
-const messageSchema = new Schema({
-  messages: questionSchema,
-}, {
+  }, {
   toJSON: { virtuals: true }, toObject: { virtuals: true },
 })
 
