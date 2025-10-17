@@ -13,19 +13,81 @@ class ConversationService {
       await conversation.save();
       return conversation;
     } catch (e) {
+      if (typeof next === "function") {
+        next(e);
+        return
+      }
       throw new next(e);
     }
   }
+
   async createMessage(id, post, reply, next) {
     try {
       const message = await Messages.create({
         conversation_id: id,
         question: post,
-        reply: reply
+        reply
       })
       await message.save();
       return message
     } catch (e) {
+      if (typeof next === "function") {
+        next(e);
+        return
+      }
+      throw new next(e);
+    }
+  }
+
+
+  async getConversation(id, next) {
+    try {
+      const conversation = await Conversation.findById({ id });
+      if (!conversation) throw new Error("Conversation not found");
+
+      const messages = await Messages.find({ conversation_id: conversation.id });
+      if (!messages) throw new Error("Messages not found");
+
+      return [conversation, messages]
+    } catch (e) {
+      if (typeof next === "function") {
+        next(e);
+        return
+      }
+      throw new next(e);
+    }
+  }
+
+  async getMessage(id, next) {
+    try {
+      const message = await Messages.findById({ id });
+      if (!message) throw new Error("Message not found");
+
+      return message;
+    } catch (e) {
+      if (typeof next === "function") {
+        next(e);
+        return
+      }
+      throw new next(e);
+    }
+  }
+
+  async updateConversation(id, title, next) {
+    try {
+      let updates = {};
+      updates.$set = { title };
+
+      const _id = new ObjectId(String(id))
+      const conversation = await Conversation.findByIdAndUpdate(_id, updates, { new: true });
+
+      if (!conversation) throw new Error("Conversation not found");
+      return conversation
+    } catch (e) {
+      if (typeof next === "function") {
+        next(e);
+        return
+      }
       throw new next(e);
     }
   }
@@ -43,6 +105,10 @@ class ConversationService {
 
       return message;
     } catch (e) {
+      if (typeof next === "function") {
+        next(e);
+        return
+      }
       throw new next(e);
     }
   }
@@ -55,6 +121,10 @@ class ConversationService {
       if (!conversation) throw new Error("Conversation does not exist.")
       return conversation.id;
     } catch (e) {
+      if (typeof next === "function") {
+        next(e);
+        return
+      }
       throw new next(e);
     }
   }
@@ -69,6 +139,10 @@ class ConversationService {
       if (!message) throw new Error("Message does not exist.")
       return message.deletedCount;
     } catch (e) {
+      if (typeof next === "function") {
+        next(e);
+        return
+      }
       throw new next(e);
     }
   }

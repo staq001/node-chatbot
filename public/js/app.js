@@ -45,7 +45,11 @@ function synthVoice(text) {
 }
 
 socket.on("bot reply", (reply) => {
-  if (reply == null || reply == "") reply = "No answer";
+  if (!reply) reply = "No answer";
   synthVoice(reply);
   bot.textContent = reply;
+})
+
+socket.on("conversation", (reply) => {
+  socket.emit("new conversation", reply);
 })
