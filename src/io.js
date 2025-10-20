@@ -14,7 +14,7 @@ function sock(listener) {
     socket.on("chat message", async (text) => {
       const title = await generateTitle(text);
 
-      const conversation = await convoService.createConversation(title, handleError);
+      const conversation = await convoService.createConversation(title);
 
       socket.emit("conversation", [conversation.id, text]);
     })
@@ -26,9 +26,9 @@ function sock(listener) {
       const response = await generateResponse(question);
 
       const message = await convoService.createMessage
-        (id, question, response, handleError);
+        (id, question, response);
 
-      socket.emit("bot reply", response);
+      socket.emit("bot reply", message.reply);
     })
   })
 

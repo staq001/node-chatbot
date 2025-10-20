@@ -1,7 +1,4 @@
-const Conversation = require("../model/conversation");
-const Messages = require("../model/messages");
-const { ObjectId } = require("mongodb");
-const { generateReponse, generateTitle } = require("../src/gemini");
+const { generateResponse, generateTitle } = require("../src/gemini");
 const ConversationService = require("../services/conversation.services");
 
 const convoService = new ConversationService();
@@ -20,7 +17,7 @@ class conversationController {
       }
       const title = await generateTitle(firstMessage);
 
-      const conversation = await convoService.createConversation(title, next);
+      const conversation = await convoService.createConversation(title);
 
       res.status(201).json({
         status: 201,
@@ -46,9 +43,9 @@ class conversationController {
         });
         return;
       }
-      const response = await generateReponse(message);
+      const response = await generateResponse(message);
 
-      const messages = await convoService.createMessage(conversation_id, message, response, next);
+      const messages = await convoService.createMessage(conversation_id, message, response);
 
       res.status(201).json({
         status: 201,
@@ -67,7 +64,7 @@ class conversationController {
       const { conversation_id } = req.params;
 
 
-      const [conversation, messages] = await convoService.getConversation(conversation_id, next);
+      const [conversation, messages] = await convoService.getConversation(conversation_id);
       if (!conversation && !messages) {
         res.status(404).json({
           status: 404,
@@ -93,7 +90,7 @@ class conversationController {
       const { message_id } = req.params;
 
 
-      const message = await convoService.getMessage(conversation_id, next);
+      const message = await convoService.getMessage(message_id);
       if (!message) {
         res.status(404).json({
           status: 404,
@@ -104,7 +101,6 @@ class conversationController {
       res.status(200).json({
         status: 200,
         data: {
-          conversation,
           message
         }
       })
@@ -124,11 +120,11 @@ class conversationController {
         res.status(400).json({
           status: 400,
           message:
-            "Bad Request. Fields (conversation_id) cannot be empty",
+            "Bad Request. Fields (newTitle) cannot be empty",
         });
         return;
       }
-      const conversation = await convoService.updateConversation(conversation_id, newTitle, next);
+      const conversation = await convoService.updateConversation(conversation_id, newTitle);
 
       if (!conversation) {
         res.status(404).json({
@@ -142,7 +138,7 @@ class conversationController {
         status: 200,
         message: "Conversation title updated successfully",
         data: {
-          updatedTitle: conversation.title
+          conversation,
         }
       })
     } catch (e) {
@@ -152,7 +148,7 @@ class conversationController {
 
   async updateMessage(req, res, next) {
     try {
-      const { conversation_id } = req.params;
+      const { message_id } = req.params;
       const { message } = req.body;
 
       if (!message) {
@@ -164,8 +160,8 @@ class conversationController {
         return;
       }
 
-      const response = await generateReponse(message)
-      const messages = await convoService.updateMessage(conversation_id, message, response, next);
+      const response = await generateResponse(message)
+      const messages = await convoService.updateMessage(message_id, message, response);
 
       if (!messages) {
         res.status(404).json({
@@ -191,7 +187,7 @@ class conversationController {
     try {
       const { conversation_id } = req.params;
 
-      const conversation = await convoService.deleteConversation(conversation_id, next)
+      const conversation = await convoService.deleteConversation(conversation_id)
 
       if (!conversation) {
         res.status(404).json({
@@ -200,7 +196,7 @@ class conversationController {
         })
       }
 
-      const messages = await convoService.deleteMessage(conversation_id, next)
+      const messages = await convoService.deleteMessage(conversation_id)
 
       if (!messages) {
         res.status(404).json({
@@ -222,3 +218,5 @@ class conversationController {
     }
   }
 }
+
+module.exports = conversationController;

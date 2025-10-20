@@ -16,7 +16,7 @@ async function generateResponse(text) {
 async function generateTitle(text) {
   const response = await ai.models.generateContent({
     model: "gemini-2.5-flash",
-    contents: `Generate a concise title for a conversation from its first message. The message goes thus: ${text}. `,
+    contents: `Generate a concise title for a conversation from its first message. Generate multiple options. Pick and return one. Don't return multiple options. The message goes thus: ${text}.`,
   })
   return response.text
 }

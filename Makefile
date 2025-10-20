@@ -12,6 +12,10 @@ compose-up:
 compose-up-build:
 	docker compose -f $(DEV_COMPOSE_FILE) up --build
 
+.PHONY: compose-build-no-cache
+compose-build-no-cache:
+	docker compose -f ${DEV_COMPOSE_FILE} build --no-cache
+
 .PHONY: compose-down
 compose-down:
 	docker compose -f $(DEV_COMPOSE_FILE) down

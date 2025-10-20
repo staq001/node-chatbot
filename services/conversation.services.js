@@ -1,11 +1,11 @@
-// const { ObjectId } = require("mongodb");
+const { ObjectId } = require("mongodb");
+const handleError = require("../src/error.js");
 
 const Messages = require("../model/messages");
 const Conversation = require("../model/conversation");
 
 class ConversationService {
-
-  async createConversation(title, next) {
+  async createConversation(title) {
     try {
       const conversation = await Conversation.create({
         title,
@@ -13,15 +13,11 @@ class ConversationService {
       await conversation.save();
       return conversation;
     } catch (e) {
-      if (typeof next === "function") {
-        next(e);
-        return
-      }
-      throw new next(e);
+      throw new handleError(e, 505);
     }
   }
 
-  async createMessage(id, post, reply, next) {
+  async createMessage(id, post, reply) {
     try {
       const message = await Messages.create({
         conversation_id: id,
@@ -31,49 +27,41 @@ class ConversationService {
       await message.save();
       return message
     } catch (e) {
-      if (typeof next === "function") {
-        next(e);
-        return
-      }
-      throw new next(e);
+      throw new handleError(e, 505)
     }
   }
 
 
-  async getConversation(id, next) {
+  async getConversation(id) {
     try {
-      const conversation = await Conversation.findById({ id });
-      if (!conversation) throw new Error("Conversation not found");
+      const _id = new ObjectId(String(id));
+
+      const conversation = await Conversation.findById({ _id });
+      if (!conversation) throw new handleError("Conversation not found", 404);
 
       const messages = await Messages.find({ conversation_id: conversation.id });
-      if (!messages) throw new Error("Messages not found");
+      if (!messages) throw new handleError("Messages not found", 404);
 
       return [conversation, messages]
     } catch (e) {
-      if (typeof next === "function") {
-        next(e);
-        return
-      }
-      throw new next(e);
+      throw new handleError(e, 505);
     }
   }
 
-  async getMessage(id, next) {
+  async getMessage(id) {
     try {
-      const message = await Messages.findById({ id });
-      if (!message) throw new Error("Message not found");
+      const _id = new ObjectId(String(id));
+
+      const message = await Messages.findById({ _id });
+      if (!message) throw new handleError("Message not found", 404);
 
       return message;
     } catch (e) {
-      if (typeof next === "function") {
-        next(e);
-        return
-      }
-      throw new next(e);
+      throw new handleError(`Error fetching message: ${e}`, 404);
     }
   }
 
-  async updateConversation(id, title, next) {
+  async updateConversation(id, title) {
     try {
       let updates = {};
       updates.$set = { title };
@@ -81,69 +69,55 @@ class ConversationService {
       const _id = new ObjectId(String(id))
       const conversation = await Conversation.findByIdAndUpdate(_id, updates, { new: true });
 
-      if (!conversation) throw new Error("Conversation not found");
+      if (!conversation) throw new handleError("Conversation not found", 404);
       return conversation
     } catch (e) {
-      if (typeof next === "function") {
-        next(e);
-        return
-      }
-      throw new next(e);
+
+      throw new handleError(e, 505);
     }
   }
 
-  async updateMessage(id, post, reply, next) {
+  async updateMessage(id, post, reply) {
     try {
       const updates = {};
-      updates.$set = { question: post };
-      updates.$set = { reply: reply };
-
+      updates.$set = {
+        question: post,
+        reply
+      }
 
       const _id = new ObjectId(String(id))
       const message = await Messages.findByIdAndUpdate(_id, updates, { new: true });
-      if (!message) throw new Error("Message not found");
+      if (!message) throw new handleError("Message not found", 404);
 
       return message;
     } catch (e) {
-      if (typeof next === "function") {
-        next(e);
-        return
-      }
-      throw new next(e);
+      throw new handleError(e, 505);
     }
   }
 
-  async deleteConversation(id, next) {
+  async deleteConversation(id) {
     try {
-      const _id = ObjectId(String(id));
+      const _id = new ObjectId(String(id));
       const conversation = await Conversation.findByIdAndDelete({ _id });
 
-      if (!conversation) throw new Error("Conversation does not exist.")
+      if (!conversation) throw new handleError("Conversation does not exist.", 404);
       return conversation.id;
     } catch (e) {
-      if (typeof next === "function") {
-        next(e);
-        return
-      }
-      throw new next(e);
+      throw new handleError(e, 505);
     }
   }
 
-  async deleteMessage(id, next) {
+  async deleteMessage(id) {
     try {
-      const _id = ObjectId(String(id));
+      const _id = new ObjectId(String(id));
 
       const message = await Messages.deleteMany({
-        conversation_id: id
+        conversation_id: _id
       })
-      if (!message) throw new Error("Message does not exist.")
+      if (!message) throw new handleError("Message does not exist.", 404)
       return message.deletedCount;
     } catch (e) {
-      if (typeof next === "function") {
-        next(e);
-        return
-      }
-      throw new next(e);
+      throw new handleError(e, 505);
     }
   }
 }
