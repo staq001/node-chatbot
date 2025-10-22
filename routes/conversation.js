@@ -5,6 +5,8 @@ const conversationController = require("../controllers/conversation.controller")
 const convoRouter = Router();
 const convoController = new conversationController();
 
+convoRouter.get("/conversations", convoController.getAllConvos);
+
 convoRouter.post("/conversation", convoController.createConversation);
 
 convoRouter.post("/message/:conversation_id", convoController.createMessage);

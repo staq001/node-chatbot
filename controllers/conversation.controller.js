@@ -59,6 +59,27 @@ class conversationController {
     }
   }
 
+  async getAllConvos(req, res, next) {
+    try {
+      const conversation = await convoService.getAllConversations();
+      if (!conversation) {
+        res.status(404).json({
+          status: 404,
+          message: "Conversation does not exist"
+        })
+        return;
+      }
+      res.status(200).json({
+        status: 200,
+        data: {
+          conversation
+        }
+      })
+
+    } catch (e) {
+      next(e)
+    }
+  }
   async getConversation(req, res, next) {
     try {
       const { conversation_id } = req.params;

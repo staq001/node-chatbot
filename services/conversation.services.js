@@ -47,6 +47,17 @@ class ConversationService {
       throw new handleError(e, 505);
     }
   }
+  async getAllConversations() {
+    try {
+
+      const conversations = await Conversation.find({});
+      if (conversations.length === 0) throw new handleError("Conversations not found", 404);
+
+      return conversations
+    } catch (e) {
+      throw new handleError(e, 505);
+    }
+  }
 
   async getMessage(id) {
     try {

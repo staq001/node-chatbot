@@ -5,7 +5,7 @@ const helmet = require("helmet")
 const cors = require("cors");
 const { rateLimit } = require("express-rate-limit")
 
-// require("./db/mongoose");
+require("./db/mongoose");
 const sock = require("./src/io");
 const convoRouter = require("./routes/conversation");
 const app = express();
