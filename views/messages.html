@@ -3,48 +3,35 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>STAQ</title>
+    <title>STAQ Chat</title>
     <link rel="stylesheet" href="/css/messages.css" />
   </head>
   <body>
     <div class="container">
       <aside class="sidebar">
-        <!-- <h2 class="logo">STAQ</h2> -->
+        <button class="new-chat" id="new-chat">+ New Chat</button>
         <nav>
-          <ul>
-            <li><button class="new-chat">+ New chat</button></li>
-            <li><a href="#" class="sidebar-item active">Chat 1</a></li>
-            <li><a href="#" class="sidebar-item">Chat 2</a></li>
-            <li><a href="#" class="sidebar-item">Chat 3</a></li>
-          </ul>
+          <ul id="conversation-list"></ul>
         </nav>
         <div class="sidebar-footer">
           <small>© 2025 STAQ</small>
         </div>
       </aside>
+
       <main class="main-content">
         <header class="header">
-          <!-- <h1>STAQ</h1> -->
+          <h1 id="conversation-title">Select or start a conversation</h1>
         </header>
-        <section class="chat-area" id="chat-area">
-          <div class="message user">
-            <div class="message-content">
-              <p>Hello, how can I help you today?</p>
-            </div>
-          </div>
-          <div class="message assistant">
-            <div class="message-content">
-              <p>Hi! Could you tell me about the weather?</p>
-            </div>
-          </div>
-        </section>
+
+        <section class="chat-area" id="chat-area"></section>
+
         <form class="input-area" id="input-area">
           <textarea placeholder="Send a message..." rows="1"></textarea>
           <button type="submit">➤</button>
         </form>
       </main>
     </div>
-  </body>
 
-  <script src="/js/messages.js"></script>
+    <script src="/js/messages.js"></script>
+  </body>
 </html>
