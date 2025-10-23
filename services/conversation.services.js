@@ -131,6 +131,18 @@ class ConversationService {
       throw new handleError(e, 505);
     }
   }
+
+  async isValidConversation(id) {
+    try {
+      const _id = new ObjectId(String(id));
+      const conversation = await Conversation.findById({ _id });
+
+      if (!conversation) return false;
+      return true;
+    } catch (e) {
+      throw new handleError(e, 505)
+    }
+  }
 }
 
 

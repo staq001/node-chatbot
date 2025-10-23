@@ -11,24 +11,20 @@ function sock(listener) {
 
   io.on("connection", (socket) => {
 
-    socket.on("chat message", async (text) => {
+    socket.on("chat message", async (reply) => {
+      const [text, id] = reply;
       const title = await generateTitle(text);
+      const response = await generateResponse(text);
 
-      const conversation = await convoService.createConversation(title);
+      const isValidConversation = await convoService.isValidConversation(id);
 
-      socket.emit("conversation", [conversation.id, text]);
-    })
+      const convo_id = isValidConversation ? id : (await convoService.createConversation(title)).id;
+      console.log(convo_id);
 
 
-    socket.on("new conversation", async (reply) => {
-      const [id, question] = reply;
+      const message = await convoService.createMessage(convo_id, text, response);
 
-      const response = await generateResponse(question);
-
-      const message = await convoService.createMessage
-        (id, question, response);
-
-      socket.emit("bot reply", message.reply);
+      socket.emit("bot reply", [response, convo_id]);
     })
   })
 
