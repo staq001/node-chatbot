@@ -14,6 +14,8 @@
 - Node.js
 - Express
 - node
+- Docker
+- Linux Shell
 
 # Getting Started
 
@@ -57,7 +59,7 @@ Edit the .env file to match your environment configuration.
 Start the development server with the following command. This will also watch for any changes in your code and automatically restart the server.
 
 ```bash
-npm start
+make compose-build-up
 ```
 
 ### 5. Verify the Setup
@@ -71,3 +73,4 @@ Every API endpoint begins with:
 ```bash
 /api/v1
 ```
+
