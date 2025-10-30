@@ -59,7 +59,7 @@ Edit the .env file to match your environment configuration.
 Start the development server with the following command. This will also watch for any changes in your code and automatically restart the server.
 
 ```bash
-make compose-build-up
+make compose-up-build
 ```
 
 ### 5. Verify the Setup
@@ -73,4 +73,5 @@ Every API endpoint begins with:
 ```bash
 /api/v1
 ```
+
 
