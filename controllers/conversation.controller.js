@@ -17,7 +17,7 @@ class conversationController {
       }
       const title = await generateTitle(firstMessage);
 
-      const conversation = await convoService.createConversation(title);
+      const conversation = await convoService.createConversation(title, req.user._id);
 
       res.status(201).json({
         status: 201,
@@ -61,7 +61,7 @@ class conversationController {
 
   async getAllConvos(req, res, next) {
     try {
-      const conversation = await convoService.getAllConversations();
+      const conversation = await convoService.getAllConversations(req.user._id);
       if (!conversation) {
         res.status(404).json({
           status: 404,
@@ -85,7 +85,7 @@ class conversationController {
       const { conversation_id } = req.params;
 
 
-      const [conversation, messages] = await convoService.getConversation(conversation_id);
+      const [conversation, messages] = await convoService.getConversation(conversation_id, req.user._id);
       if (!conversation && !messages) {
         res.status(404).json({
           status: 404,
@@ -145,7 +145,7 @@ class conversationController {
         });
         return;
       }
-      const conversation = await convoService.updateConversation(conversation_id, newTitle);
+      const conversation = await convoService.updateConversation(conversation_id, newTitle, req.user._id);
 
       if (!conversation) {
         res.status(404).json({
@@ -208,7 +208,7 @@ class conversationController {
     try {
       const { conversation_id } = req.params;
 
-      const conversation = await convoService.deleteConversation(conversation_id)
+      const conversation = await convoService.deleteConversation(conversation_id, req.owner._id)
 
       if (!conversation) {
         res.status(404).json({

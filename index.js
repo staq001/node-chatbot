@@ -8,11 +8,12 @@ const { rateLimit } = require("express-rate-limit")
 require("./db/mongoose");
 const sock = require("./src/io");
 const convoRouter = require("./routes/conversation");
+const userRouter = require("./routes/user");
 const app = express();
 const server = http.createServer(app);
 const io = sock(server);
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 9500;
 
 app.use(
   cors({
@@ -47,6 +48,7 @@ app.use(express.static(__dirname + "/views"));
 app.use(express.static(__dirname + "/public"));
 
 app.use("/api/v1", convoRouter);
+app.use("/api/v1", userRouter);
 
 app.get("/", (req, res) => {
   res.sendFile("index.html");

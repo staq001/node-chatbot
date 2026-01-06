@@ -4,21 +4,22 @@ const conversationController = require("../controllers/conversation.controller")
 
 const convoRouter = Router();
 const convoController = new conversationController();
+const auth = require("../middleware/auth")
 
-convoRouter.get("/conversations", convoController.getAllConvos);
+convoRouter.get("/conversations", auth, convoController.getAllConvos);
 
-convoRouter.post("/conversation", convoController.createConversation);
+convoRouter.post("/conversation", auth, convoController.createConversation);
 
-convoRouter.post("/message/:conversation_id", convoController.createMessage);
+convoRouter.post("/message/:conversation_id", auth, convoController.createMessage);
 
-convoRouter.get("/conversation/:conversation_id", convoController.getConversation);
+convoRouter.get("/conversation/:conversation_id", auth, convoController.getConversation);
 
-convoRouter.get("/message/:message_id", convoController.getMessage);
+convoRouter.get("/message/:message_id", auth, convoController.getMessage);
 
-convoRouter.patch("/updateMessage/:message_id", convoController.updateMessage);
+convoRouter.patch("/updateMessage/:message_id", auth, convoController.updateMessage);
 
-convoRouter.patch("/updateTitle/:conversation_id", convoController.updateConversationTitle);
+convoRouter.patch("/updateTitle/:conversation_id", auth, convoController.updateConversationTitle);
 
-convoRouter.delete("/conversation/:conversation_id", convoController.deleteConversation)
+convoRouter.delete("/conversation/:conversation_id", auth, convoController.deleteConversation)
 
 module.exports = convoRouter;

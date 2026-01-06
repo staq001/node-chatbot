@@ -5,10 +5,10 @@ const Messages = require("../model/messages");
 const Conversation = require("../model/conversation");
 
 class ConversationService {
-  async createConversation(title) {
+  async createConversation(title, owner) {
     try {
       const conversation = await Conversation.create({
-        title,
+        title, owner
       });
       await conversation.save();
       return conversation;
@@ -32,11 +32,11 @@ class ConversationService {
   }
 
 
-  async getConversation(id) {
+  async getConversation(id, owner) {
     try {
       const _id = new ObjectId(String(id));
 
-      const conversation = await Conversation.findById({ _id });
+      const conversation = await Conversation.findById({ _id, owner });
       if (!conversation) throw new handleError("Conversation not found", 404);
 
       const messages = await Messages.find({ conversation_id: conversation.id });
@@ -47,10 +47,10 @@ class ConversationService {
       throw new handleError(e, 505);
     }
   }
-  async getAllConversations() {
+  async getAllConversations(owner) {
     try {
 
-      const conversations = await Conversation.find({});
+      const conversations = await Conversation.find({ owner });
       if (conversations.length === 0) throw new handleError("Conversations not found", 404);
 
       return conversations
@@ -72,13 +72,13 @@ class ConversationService {
     }
   }
 
-  async updateConversation(id, title) {
+  async updateConversation(id, title, owner) {
     try {
       let updates = {};
       updates.$set = { title };
 
       const _id = new ObjectId(String(id))
-      const conversation = await Conversation.findByIdAndUpdate(_id, updates, { new: true });
+      const conversation = await Conversation.findByIdAndUpdate({ _id, owner }, updates, { new: true });
 
       if (!conversation) throw new handleError("Conversation not found", 404);
       return conversation
@@ -106,10 +106,10 @@ class ConversationService {
     }
   }
 
-  async deleteConversation(id) {
+  async deleteConversation(id, owner) {
     try {
       const _id = new ObjectId(String(id));
-      const conversation = await Conversation.findByIdAndDelete({ _id });
+      const conversation = await Conversation.findByIdAndDelete({ _id, owner });
 
       if (!conversation) throw new handleError("Conversation does not exist.", 404);
       return conversation.id;
@@ -134,6 +134,9 @@ class ConversationService {
 
   async isValidConversation(id) {
     try {
+      if (!id)
+        return false
+
       const _id = new ObjectId(String(id));
       const conversation = await Conversation.findById({ _id });
 
