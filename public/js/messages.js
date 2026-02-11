@@ -5,15 +5,9 @@ textarea.addEventListener("input", () => {
 })
 
 const token = localStorage.getItem("token")
-const username = localStorage.getItem("username")
 
 if (!token) {
   window.location.href = "/login"
-}
-
-const usernameDisplay = document.getElementById("username-display")
-if (usernameDisplay && username) {
-  usernameDisplay.textContent = username
 }
 
 const logoutBtn = document.getElementById("logout-btn")
