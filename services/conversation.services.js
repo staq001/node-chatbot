@@ -39,7 +39,8 @@ class ConversationService {
       const conversation = await Conversation.findById({ _id, owner });
       if (!conversation) throw new handleError("Conversation not found", 404);
 
-      const messages = await Messages.find({ conversation_id: conversation.id });
+      // Ensure messages are returned in chronological order
+      const messages = await Messages.find({ conversation_id: conversation.id }).sort({ _id: 1 });
       if (!messages) throw new handleError("Messages not found", 404);
 
       return [conversation, messages]
@@ -51,7 +52,6 @@ class ConversationService {
     try {
 
       const conversations = await Conversation.find({ owner });
-      if (conversations.length === 0) throw new handleError("Conversations not found", 404);
 
       return conversations
     } catch (e) {

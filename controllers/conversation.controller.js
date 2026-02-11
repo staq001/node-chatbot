@@ -43,9 +43,11 @@ class conversationController {
         });
         return;
       }
-      const response = await generateResponse(message);
 
-      const messages = await convoService.createMessage(conversation_id, message, response);
+      const [conversation, messagesList] = await convoService.getConversation(conversation_id, req.user._id);
+      const responseText = await generateResponse(message, messagesList);
+
+      const messages = await convoService.createMessage(conversation_id, message, responseText);
 
       res.status(201).json({
         status: 201,
@@ -174,8 +176,13 @@ class conversationController {
         return;
       }
 
-      const response = await generateResponse(message)
-      const messages = await convoService.updateMessage(message_id, message, response);
+      // Fetch the message to obtain its conversation id, then get history
+      const existingMessage = await convoService.getMessage(message_id);
+      const convoId = existingMessage.conversation_id;
+      const [_conversation, messagesList] = await convoService.getConversation(convoId, req.user._id);
+
+      const responseText = await generateResponse(message, messagesList);
+      const messages = await convoService.updateMessage(message_id, message, responseText);
 
       if (!messages) {
         res.status(404).json({
