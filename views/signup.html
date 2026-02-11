@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="STAQ Voice Bot - Sign Up" />
+    <title>STAQ Voice Bot - Sign Up</title>
+    <link rel="stylesheet" href="/css/auth.css" />
+  </head>
+  <body>
+    <div class="auth-container">
+      <div class="auth-card">
+        <div class="auth-header">
+          <h1>STAQ Voice Bot</h1>
+          <p class="auth-subtitle">AI Chat with Voice Recognition</p>
+        </div>
+
+        <form class="auth-form" id="signup-form">
+          <h2>Create Account</h2>
+          <div class="form-group">
+            <label for="signup-username">Username</label>
+            <input
+              type="text"
+              id="signup-username"
+              name="username"
+              placeholder="Choose a username"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="signup-email">Email</label>
+            <input
+              type="email"
+              id="signup-email"
+              name="email"
+              placeholder="Enter your email"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="signup-password">Password</label>
+            <input
+              type="password"
+              id="signup-password"
+              name="password"
+              placeholder="Create a password"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="signup-confirm">Confirm Password</label>
+            <input
+              type="password"
+              id="signup-confirm"
+              name="confirm"
+              placeholder="Confirm your password"
+              required
+            />
+          </div>
+
+          <button type="submit" class="auth-btn">Sign Up</button>
+
+          <p class="form-switch">
+            Already have an account?
+            <a href="/login" class="switch-btn">Login</a>
+          </p>
+
+          <div class="error-message" id="signup-error"></div>
+        </form>
+      </div>
+    </div>
+
+    <script src="/js/signup.js"></script>
+  </body>
+</html>

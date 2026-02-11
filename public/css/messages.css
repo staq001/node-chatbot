@@ -71,10 +71,56 @@ html {
   transition: background-color 0.3s ease;
 }
 
-.logo {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-bottom: 20px;
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.user-info {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  min-width: 0;
+}
+
+#username-display {
+  color: var(--sidebar-text);
+  font-weight: 500;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.logout-btn {
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--sidebar-text);
+  padding: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.logout-btn svg {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+}
+
+.logout-btn:hover {
+  background-color: #e74c3c;
+  border-color: #e74c3c;
+  color: white;
 }
 
 .theme-toggle {
@@ -84,7 +130,6 @@ html {
   border: 1px solid var(--border-color);
   color: var(--sidebar-text);
   padding: 0;
-  margin-bottom: 10px;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -93,6 +138,7 @@ html {
   justify-content: center;
   gap: 0;
   position: relative;
+  flex-shrink: 0;
 }
 
 .theme-toggle:hover {

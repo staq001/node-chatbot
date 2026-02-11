@@ -1,5 +1,15 @@
 const io = window.io
-const socket = io()
+
+const token = localStorage.getItem("token")
+if (!token) {
+  window.location.href = "/login"
+}
+
+const socket = io({
+  auth: {
+    token: token,
+  },
+})
 
 const start = document.querySelector(".output-you")
 const bot = document.querySelector(".output-bot")
@@ -15,6 +25,11 @@ recognition.interimResults = false
 
 socket.on("connect_error", (error) => {
   console.log("Socket connection error:", error)
+  if (error.message === "Unauthorized") {
+    // Token expired or invalid, redirect to auth
+    localStorage.clear()
+    window.location.href = "/login"
+  }
   bot.textContent = "Server connection failed"
 })
 
@@ -116,3 +131,23 @@ socket.on("bot reply", (reply) => {
   bot.textContent = response
   sessionStorage.setItem("convo_id", id);
 })
+
+// Messages button handler
+const messagesBtn = document.getElementById("messages-btn");
+if (messagesBtn) {
+  messagesBtn.addEventListener("click", () => {
+    window.location.href = "/messages";
+  });
+}
+
+// Logout button handler
+const logoutBtn = document.getElementById("logout-btn");
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", () => {
+    if (confirm("Are you sure you want to logout?")) {
+      localStorage.clear();
+      sessionStorage.clear();
+      window.location.href = "/login";
+    }
+  });
+}

@@ -4,7 +4,37 @@ textarea.addEventListener("input", () => {
   textarea.style.height = `${textarea.scrollHeight}px`
 })
 
-const API_BASE = "http://localhost:3000/api/v1"
+const token = localStorage.getItem("token")
+const username = localStorage.getItem("username")
+
+if (!token) {
+  window.location.href = "/login"
+}
+
+const usernameDisplay = document.getElementById("username-display")
+if (usernameDisplay && username) {
+  usernameDisplay.textContent = username
+}
+
+const logoutBtn = document.getElementById("logout-btn")
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", () => {
+    if (confirm("Are you sure you want to logout?")) {
+      localStorage.clear()
+      sessionStorage.clear()
+      window.location.href = "/login"
+    }
+  })
+}
+
+const homeBtn = document.getElementById("home-btn")
+if (homeBtn) {
+  homeBtn.addEventListener("click", () => {
+    window.location.href = "/"
+  })
+}
+
+const API_BASE = "/api/v1"
 
 function initializeDarkMode() {
   const isDarkMode = localStorage.getItem("staq-dark-mode") === "true"
@@ -62,7 +92,17 @@ document.addEventListener("DOMContentLoaded", () => {
   async function loadConversations() {
     convoList.innerHTML = ""
     try {
-      const res = await fetch(`${API_BASE}/conversations`)
+      const res = await fetch(`${API_BASE}/conversations`, {
+        headers: {
+          "Authorization": `Bearer ${token}`,
+        },
+      })
+
+      if (res.status === 401) {
+        localStorage.clear()
+        window.location.href = "/login"
+        return
+      }
 
       if (!res.ok) throw new Error("Failed to fetch conversations")
       const { data } = await res.json()
@@ -96,13 +136,9 @@ document.addEventListener("DOMContentLoaded", () => {
           deleteConversation(convo._id)
         }
 
-        const sidebarItem = document.createElement("a")
+        const sidebarItem = document.createElement("div")
         sidebarItem.classList.add("sidebar-item")
-        sidebarItem.href = "#"
-        sidebarItem.onclick = (e) => {
-          e.preventDefault()
-          openConversation(convo._id, convo.title)
-        }
+        sidebarItem.style.cursor = "pointer"
 
         sidebarItem.appendChild(a)
         sidebarItem.appendChild(deleteBtn)
@@ -124,7 +160,18 @@ document.addEventListener("DOMContentLoaded", () => {
     clearChat()
 
     try {
-      const res = await fetch(`${API_BASE}/conversation/${convoId}`)
+      const res = await fetch(`${API_BASE}/conversation/${convoId}`, {
+        headers: {
+          "Authorization": `Bearer ${token}`,
+        },
+      })
+
+      if (res.status === 401) {
+        localStorage.clear()
+        window.location.href = "/login"
+        return
+      }
+
       if (!res.ok) throw new Error("Failed to load conversation")
 
       const { data } = await res.json()
@@ -146,9 +193,18 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const res = await fetch(`${API_BASE}/message/${convoId}`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
         body: JSON.stringify({ message: userMessage }),
       })
+
+      if (res.status === 401) {
+        localStorage.clear()
+        window.location.href = "/login"
+        return
+      }
 
       if (!res.ok) throw new Error("Failed to send message")
       const { data } = await res.json()
@@ -179,9 +235,19 @@ document.addEventListener("DOMContentLoaded", () => {
       try {
         const res = await fetch(`${API_BASE}/conversation`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
           body: JSON.stringify({ firstMessage: text }),
         })
+
+        if (res.status === 401) {
+          localStorage.clear()
+          window.location.href = "/login"
+          return
+        }
+
         const { data } = await res.json()
         currentConversationId = data.conversation._id
         titleEl.textContent = data.conversation.title
@@ -202,7 +268,17 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const res = await fetch(`${API_BASE}/conversation/${convoId}`, {
         method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+        },
       })
+
+      if (res.status === 401) {
+        localStorage.clear()
+        window.location.href = "/login"
+        return
+      }
+
       if (!res.ok) throw new Error("Failed to delete")
       loadConversations()
       clearChat()
