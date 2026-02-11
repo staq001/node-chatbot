@@ -70,8 +70,8 @@ class UserController {
 
       const user = await User.findOne({ email });
       if (!user) {
-        res.status(404).json({
-          status: 404,
+        res.status(401).json({
+          status: 401,
           message: "User doesn't exist. Please create an account.",
         });
         return;
@@ -80,15 +80,15 @@ class UserController {
       const comparePassword = await bcrypt.compare(password, user.password);
 
       if (!comparePassword) {
-        res.status(404).json({
-          status: 404,
+        res.status(401).json({
+          status: 401,
           message: "Wrong email/password combination",
         });
         return;
       }
 
       const token = jwt.sign(
-        { id: user.id },
+        { id: user._id },
         process.env.JWT_SECRET,
         { expiresIn: process.env.JWT_EXPIRES_IN }
       );
@@ -139,12 +139,12 @@ class UserController {
       }
 
       let updates = {};
-      updates.$set = {
-        username,
-        password,
-      };
+      updates.$set = {};
 
-      const user = await User.findByIdAndUpdate({ _id: req.user.id }, updates, {
+      if (username) updates.$set.username = username;
+      if (password) updates.$set.password = password;
+
+      const user = await User.findByIdAndUpdate({ _id: req.user._id }, updates, {
         new: true,
       });
       if (!user) {
@@ -174,15 +174,14 @@ class UserController {
     next
   ) {
     try {
-      const user = await User.findByIdAndDelete({ _id: req.user.id });
-      if (!user)
-        if (!user) {
-          res.status(404).json({
-            status: 404,
-            message: "User doesn't exist",
-          });
-          return;
-        }
+      const user = await User.findByIdAndDelete({ _id: req.user._id });
+      if (!user) {
+        res.status(404).json({
+          status: 404,
+          message: "User doesn't exist",
+        });
+        return;
+      }
 
       res.status(200).json({
         status: 200,

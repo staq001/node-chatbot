@@ -208,7 +208,7 @@ class conversationController {
     try {
       const { conversation_id } = req.params;
 
-      const conversation = await convoService.deleteConversation(conversation_id, req.owner._id)
+      const conversation = await convoService.deleteConversation(conversation_id, req.user._id)
 
       if (!conversation) {
         res.status(404).json({
