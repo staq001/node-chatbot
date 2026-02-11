@@ -72,7 +72,7 @@ class UserController {
       if (!user) {
         res.status(401).json({
           status: 401,
-          message: "User doesn't exist. Please create an account.",
+          message: "Invalid email or password. Please try again.",
         });
         return;
       }
@@ -82,7 +82,7 @@ class UserController {
       if (!comparePassword) {
         res.status(401).json({
           status: 401,
-          message: "Wrong email/password combination",
+          message: "Invalid email or password. Please try again.",
         });
         return;
       }

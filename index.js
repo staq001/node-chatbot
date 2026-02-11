@@ -18,7 +18,7 @@ const PORT = process.env.PORT || 9500;
 app.use(
   cors({
     origin: "*",
-    methods: ["GET", "PATCH", "PUT", "DELETE", "OPTIONS"],
+    methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: [
       "Origin",
       "X-Requested-With",
@@ -51,7 +51,19 @@ app.use("/api/v1", convoRouter);
 app.use("/api/v1", userRouter);
 
 app.get("/", (req, res) => {
-  res.sendFile("index.html");
+  res.sendFile(__dirname + "/views/index.html");
+})
+
+app.get("/messages", (_req, res) => {
+  res.sendFile(__dirname + "/views/messages.html");
+})
+
+app.get("/login", (_req, res) => {
+  res.sendFile(__dirname + "/views/login.html");
+})
+
+app.get("/signup", (_req, res) => {
+  res.sendFile(__dirname + "/views/signup.html");
 })
 
 app.use((req, res) => {
@@ -63,8 +75,8 @@ app.use((req, res) => {
 });
 
 app.use((err, _req, res, _next) => {
-  res.status(err.status || 500).json({
-    status: err.status || 500,
+  res.status(err.statusCode || 500).json({
+    status: err.statusCode || 500,
     error: err.message || "Internal Server Error",
   });
 });
