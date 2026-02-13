@@ -21,7 +21,8 @@ class UserController {
       if (user) {
         res.status(409).json({
           status: 409,
-          message: "User already exists. Pick a new username",
+          field: "username",
+          message: "Username already exists. Pick a new username",
         });
         return;
       }
@@ -30,7 +31,8 @@ class UserController {
       if (userEmail) {
         res.status(409).json({
           status: 409,
-          message: "User already exists. Pick a new email",
+          field: "email",
+          message: "Email already exists. Pick a new email",
         });
         return;
       }

@@ -12,14 +12,17 @@ document
     const errorDiv = document.getElementById("signup-error");
 
     errorDiv.textContent = "";
+    errorDiv.style.display = "";
 
     if (password !== confirm) {
       errorDiv.textContent = "Passwords do not match.";
+      errorDiv.style.display = "block";
       return;
     }
 
     if (password.length < 6) {
       errorDiv.textContent = "Password must be at least 6 characters long.";
+      errorDiv.style.display = "block";
       return;
     }
 
@@ -32,10 +35,22 @@ document
         body: JSON.stringify({ username, email, password }),
       });
 
-      const data = await response.json();
+      const contentType = response.headers.get("content-type") || "";
+      let data = {};
+      if (contentType.includes("application/json")) {
+        data = await response.json();
+      }
 
       if (!response.ok) {
-        errorDiv.textContent = data.message || "Sign up failed. Please try again.";
+        const message = data.message || "Sign up failed. Please try again.";
+        console.debug("Signup error response:", response.status, data);
+        errorDiv.textContent = message;
+        errorDiv.style.display = "block";
+        if (data.field === "username") {
+          document.getElementById("signup-username").focus();
+        } else if (data.field === "email") {
+          document.getElementById("signup-email").focus();
+        }
         return;
       }
 
@@ -63,6 +78,7 @@ document
       }
     } catch (error) {
       errorDiv.textContent = "Network error. Please try again.";
+      errorDiv.style.display = "block";
       console.error("Sign up error:", error);
     }
   });
