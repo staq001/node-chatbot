@@ -10,6 +10,8 @@ const sock = require("./src/io");
 const convoRouter = require("./routes/conversation");
 const userRouter = require("./routes/user");
 const app = express();
+
+app.set("trust proxy", 1);
 const server = http.createServer(app);
 const io = sock(server);
 
