@@ -43,7 +43,6 @@ document
 
       if (!response.ok) {
         const message = data.message || "Sign up failed. Please try again.";
-        console.debug("Signup error response:", response.status, data);
         errorDiv.textContent = message;
         errorDiv.style.display = "block";
         if (data.field === "username") {
@@ -70,7 +69,6 @@ document
         localStorage.setItem("email", loginData.data.email);
         window.location.href = "/";
       } else {
-        // Redirect to login if auto-login fails
         errorDiv.textContent = "Account created! Redirecting to login...";
         setTimeout(() => {
           window.location.href = "/login";
@@ -79,15 +77,12 @@ document
     } catch (error) {
       errorDiv.textContent = "Network error. Please try again.";
       errorDiv.style.display = "block";
-      console.error("Sign up error:", error);
     }
   });
 
-// Check if user is already logged in
 window.addEventListener("load", () => {
   const token = localStorage.getItem("token");
   if (token) {
-    // User already logged in, redirect to main app
     window.location.href = "/";
   }
 });
